@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package forge.v1;
+
+option go_package = "github.com/paladimo/sigil/forge/v1;forgev1";
+
+service CertificateAuthority {
+    rpc IssueCert (IssueCertRequest) returns (CertResponse);
+    rpc RenewCert (RenewCertRequest) returns (CertResponse);
+    rpc RevokeCert (RevokeRequest) returns (RevokeResponse);
+    rpc GetRootCert (Empty) returns (RootCertResponse);
+}
+
+message Empty {}
+
+message IssueCertRequest {
+    string bootstrap_token = 1;
+    string service_name = 2;
+    bytes csr = 3;
+}
+
+message RenewCertRequest {
+    bytes csr = 1;
+}
+
+message RevokeRequest {
+    string serial = 1;
+    string reason = 2;
+}
+
+message RevokeResponse {
+    bool ok = 1;
+    string message = 2;
+}
+
+message CertResponse {
+    bytes certificate = 1;
+    bytes root_ca = 2;
+    string serial = 3;
+    int64 expires_at = 4;
+}
+
+message RootCertResponse {
+    bytes cert_pem = 1;
+    string subject = 2;
+    int64 expires_at = 3;
+} 
