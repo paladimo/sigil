@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package vault.v1;
+
+option go_package = "github.com/paladimo/sigil/vault/v1;vaultv1";
+
+service Vault {
+    rpc SetSecret    (SetSecretRequest)    returns (SetSecretResponse);
+    rpc GetSecret    (GetSecretRequest)    returns (GetSecretResponse);
+    rpc DeleteSecret (DeleteSecretRequest) returns (DeleteSecretResponse);
+    rpc ListSecrets  (ListSecretsRequest)  returns (ListSecretsResponse);
+    rpc WatchSecret  (WatchSecretRequest)  returns (stream WatchSecretResponse);
+}
+
+message SetSecretRequest {
+    string key   = 1;
+    string value = 2;
+    int64  ttl   = 3;
+}
+
+message SetSecretResponse {
+    bool   ok         = 1;
+    string key        = 2;
+    int64  expires_at = 3;
+}
+
+message GetSecretRequest {
+    string key = 1;
+}
+
+message GetSecretResponse {
+    string key        = 1;
+    string value      = 2;
+    int64  expires_at = 3;
+}
+
+message DeleteSecretRequest {
+    string key    = 1;
+    string reason = 2;
+}
+
+message DeleteSecretResponse {
+    bool   ok      = 1;
+    string message = 2;
+}
+
+message ListSecretsRequest {
+    string prefix = 1;
+}
+
+message ListSecretsResponse {
+    repeated SecretMeta secrets = 1;
+}
+
+message SecretMeta {
+    string key        = 1;
+    int64  expires_at = 2;
+    int64  updated_at = 3;
+}
+
+message WatchSecretRequest {
+    string key = 1;
+}
+
+message WatchSecretResponse {
+    string key        = 1;
+    string value      = 2;
+    int64  expires_at = 3;
+    string event      = 4;
+}
